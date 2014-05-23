@@ -19,6 +19,7 @@ using System.Collections.Generic;
 
     public class SpaceItem {
         public string  item_name;
+        public bool isActive;
         public Vector3 item_pos;
         public Quaternion item_rot;
         public Vector3 item_scale;
