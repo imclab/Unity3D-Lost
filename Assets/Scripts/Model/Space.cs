@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+================================================================================
+FileName    : 
+Description : 
+Date        : 2014-05-23
+Author      : Linkrules
+================================================================================
+*/
+using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 

@@ -17,7 +17,7 @@ using ProtoBuf;
 
 
         public ProtobufUtility() {
-           // InitProtobufTypes( this.GetType().Assembly );
+            InitProtobufTypes( this.GetType().Assembly );
         }
 
 

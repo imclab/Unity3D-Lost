@@ -1,4 +1,12 @@
-﻿using UnityEngine;
+﻿/*
+================================================================================
+FileName    : 
+Description : 
+Date        : 2014-05-23
+Author      : Linkrules
+================================================================================
+*/
+using UnityEngine;
 using System.Collections;
 
 public class SpaceCreator : MonoBehaviour {
@@ -6,7 +14,7 @@ public class SpaceCreator : MonoBehaviour {
     SpaceWorld space;
 
     /// <summary>
-    /// 获取将要进入的空间ID和空间数据,然后初始化空间
+    /// 获取将要进入的空间ID和空间元素数据,然后初始化空间
     /// </summary>
     public void InitSpace() {
         int nextSpaceId = GameManager.gameController.GetNextSpaceId();

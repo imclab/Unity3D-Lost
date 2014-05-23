@@ -1,14 +1,24 @@
-﻿using UnityEngine;
+﻿/*
+================================================================================
+FileName    : 
+Description : 
+Date        : 2014-05-23
+Author      : Linkrules
+================================================================================
+*/
+using UnityEngine;
 using System.Collections;
 using System.IO;
+using Com.Lost.GameData;
 
 public class GameController {
 
     GameConfigure gameConfigure = new GameConfigure();
 
-    public void InitGame() {
+    public void InitGameConfigure() {
         LoadGameConfigure();
     }
+
 
     
     /// <summary>
@@ -17,7 +27,10 @@ public class GameController {
     public void LoadGameConfigure() {
         byte[] gameData = DataCenter.LoadDataFromBinaryFile( Application.streamingAssetsPath + "/" + ConstantParams.file_gameConfigure );
         if ( gameData != null ) {
-            // Parse data to GameConfigure class
+#if LR_DEBUG
+            Debug.Log("You are first time in this game.!");
+#endif
+            gameConfigure = (GameConfigure)GameManager.protobufUtility.Deserialize( gameData, "GameConfigure" );
         } else {
             InitGameDefault();
             SaveGameConfigure();
@@ -27,13 +40,34 @@ public class GameController {
     }
 
 
+    /// <summary>
+    /// 将空间ID矩阵及当前ID保存到磁盘
+    /// </summary>
     public void SaveGameConfigure() {
-        
+        byte[] configureData = GameManager.protobufUtility.Serialize( gameConfigure );
+        DataCenter.SaveDataToBinaryFile( Application.streamingAssetsPath + "/" + ConstantParams.file_gameConfigure , configureData);
     }
 
 
+    /// <summary>
+    /// 若第一次进入游戏,则生成默认配置文件,初始化空间矩阵,随机选择第一次进入的世界
+    /// </summary>
     private void InitGameDefault() {
+        byte[] spaceMapMatrix = new byte[200];
 
+        int writeIndex = 0;
+
+        for ( short i = 1; i <= 100; ++i ) {
+            byte[] id = System.BitConverter.GetBytes( i );
+            System.Array.Copy(id,0,spaceMapMatrix,writeIndex,2);
+            writeIndex += 2;
+        }
+
+        int initId = (int)Random.Range( 1, 101 );
+
+        gameConfigure.isFirstGameTime = false;
+        gameConfigure.spaceMapMatrix = spaceMapMatrix;
+        gameConfigure.nextSpaceId = initId;
     }
 
 

@@ -1,8 +1,27 @@
-﻿using UnityEngine;
+﻿/*
+================================================================================
+FileName    : 
+Description : 
+Date        : 2014-05-23
+Author      : Linkrules
+================================================================================
+*/
+using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
 
+    static public void StartGame() {
+        GameManager.gameController.InitGameConfigure();
+        GameManager.spaceController.InitSpaceMap();
+        GameManager.spaceCreator.InitSpace();
+        
+    }
+
+
+    /// <summary>
+    /// 加载保存游戏配置
+    /// </summary>
     static private GameController _gameController = null;
     static public GameController gameController {
         get {
@@ -14,6 +33,9 @@ public class GameManager : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// 空间地图的初始化,变化,跳跃
+    /// </summary>
     static private SpaceController _spaceController = null;
     static public SpaceController spaceController {
         get {
@@ -25,6 +47,9 @@ public class GameManager : MonoBehaviour {
     }
 
 
+    /// <summary>
+    /// 具体的空间操作,生成,清除
+    /// </summary>
     static private SpaceCreator _spaceCreator = null;
     static public SpaceCreator spaceCreator {
         get{
@@ -36,6 +61,20 @@ public class GameManager : MonoBehaviour {
                 _spaceCreator = obj.AddComponent<SpaceCreator>();
             }
             return _spaceCreator;
+        }
+    }
+
+
+    /// <summary>
+    /// 数据序列化
+    /// </summary>
+    static private ProtobufUtility _protobufUtility = null;
+    static public ProtobufUtility protobufUtility {
+        get {
+            if ( _protobufUtility == null ) {
+                _protobufUtility = new ProtobufUtility();
+            }
+            return _protobufUtility;
         }
     }
 
