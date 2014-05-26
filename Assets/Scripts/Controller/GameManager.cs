@@ -60,5 +60,19 @@ public class GameManager : MonoBehaviour {
     }
 
 
+
+    /// <summary>
+    /// 保存不同物体的脚本属性，通过Json
+    /// </summary>
+    static private AttributeSystem _attributeSystem = null;
+    static public AttributeSystem attributeSystem {
+        get {
+            if( _attributeSystem == null ) {
+                _attributeSystem = new AttributeSystem();
+            }
+            return _attributeSystem;
+        }
+    }
+    
    
 }

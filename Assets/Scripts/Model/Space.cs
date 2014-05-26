@@ -25,6 +25,7 @@ using Com.Lost.GameData;
     public class SpaceItem {
         public SpaceItem(){}
         public string  item_name;
+        public int uid;
         public bool isActive;
 
         public LRVector3 item_pos;

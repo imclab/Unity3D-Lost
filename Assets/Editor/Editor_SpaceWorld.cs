@@ -79,6 +79,7 @@ public class Editor_SpaceWorld : EditorWindow {
 
 
     void OpenSpaceWorld( string id ) {
+        GameManager.attributeSystem.LoadAllAttribute();
         string filePath = Application.streamingAssetsPath + "/SpaceWorlds/" + ConstantParams.file_space + id;
 
         if ( !File.Exists( filePath ) ) {
@@ -92,7 +93,7 @@ public class Editor_SpaceWorld : EditorWindow {
 
             foreach ( SpaceItem item in space.items ) {
                 GameObject obj = Instantiate( Resources.Load( item.item_name ) ) as GameObject;
-                obj.name = item.item_name;
+                obj.name = item.item_name + "_" + item.uid;
                 obj.transform.position = new Vector3(item.item_pos.x,item.item_pos.y,item.item_pos.z);
                 obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
                 obj.transform.localScale = new Vector3( item.item_scale.x, item.item_scale.y, item.item_scale.z );
@@ -139,17 +140,20 @@ public class Editor_SpaceWorld : EditorWindow {
         space.items = new SpaceItem[savedItems.Count];
         for ( int i = 0; i < savedItems.Count; ++i ) {
             SpaceItem item = new SpaceItem();
-            item.item_name = savedItems[i].name;
+            item.uid = GameManager.attributeSystem.GetUniqueID();
+            item.item_name = savedItems[i].name.Split('_')[0];
             item.isActive = savedItems[i].activeSelf;
             item.item_pos = new LRVector3( savedItems[i].transform.position.x, savedItems[i].transform.position.y, savedItems[i].transform.position.z );
             item.itme_rot = new LRQuaternion( savedItems[i].transform.rotation.x, savedItems[i].transform.rotation.y, savedItems[i].transform.rotation.z, savedItems[i].transform.rotation.w );
             item.item_scale = new LRVector3( savedItems[i].transform.localScale.x, savedItems[i].transform.localScale.y, savedItems[i].transform.localScale.z );
-            
             space.items[i] = item;
+            
+            savedItems[i].SendMessage( "SaveMyAttribute", SendMessageOptions.DontRequireReceiver );
         }
 
         string spaceWorldDataStr = JsonWriter.Serialize( space );
         DataCenter.SaveDataToFile( spaceWorldDataStr, Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id, false );
+        GameManager.attributeSystem.SaveAllAttribute();
         AssetDatabase.Refresh();
     }
 

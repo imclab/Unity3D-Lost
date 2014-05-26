@@ -17,6 +17,7 @@ public class ConstantParams {
     static public string idChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
     static public string file_gameConfigure = "GameData";
+    static public string file_attribute = "AttributeData";
     static public string file_space = "Space_";
    
 }

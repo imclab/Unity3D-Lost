@@ -74,7 +74,6 @@ public class RigidbodyMove : MonoBehaviour {
                 }
                 _startJumpUpTime = Time.time;
                 _lastVelocityX = rigidbody2D.velocity.x;
-                Debug.Log( "Jump Up " + Time.time );
                 break;
         }
         moveState = state;
