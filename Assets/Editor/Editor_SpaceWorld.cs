@@ -3,13 +3,15 @@ using System.Collections;
 using UnityEditor;
 using System.Xml;
 using System.IO;
-
+using System.Collections.Generic;
+using JsonFx.Json;
 public class Editor_SpaceWorld : EditorWindow {
     static private string id = "";
+    static private bool isOpen = false;
     
     [MenuItem("Game Tools/Space World Editor")]
     static void Active() {
-        EditorWindow.GetWindow<Editor_SpaceWorld>( true );
+        EditorWindow.GetWindow<Editor_SpaceWorld>( false );
     }
 
 
@@ -21,20 +23,30 @@ public class Editor_SpaceWorld : EditorWindow {
         GUILayout.BeginVertical();
 
         GUILayout.BeginHorizontal();
-        GUILayout.Label( "ID ", GUILayout.Width( 20 ), GUILayout.Height( 20 ) );
-        id = GUILayout.TextField( id, GUILayout.Width( 140 ), GUILayout.Height( 20 ) );
+        GUILayout.Label( "File ID: ",  GUILayout.Width(40),GUILayout.Height( 20 ) );
+        id = GUILayout.TextField( id, GUILayout.Height( 20 ) );
         GUILayout.EndHorizontal();
-
+        GUILayout.Label( "" );
         GUILayout.BeginHorizontal();
-        if ( GUILayout.Button( "Open Space" , GUILayout.Width(80),GUILayout.Height(20)) ) {
+        if ( GUILayout.Button( "Open Space" , GUILayout.Height(20)) ) {
             if ( id == "" ) {
                 return;
             }
 
-            OpenSpaceWorld( id );
+            if ( isOpen ) {
+                if ( !EditorUtility.DisplayDialog( "Warning!", "Some spaceworld has opend, Would you want to clear it?", "Yes", "Cancel" ) ) {
+                    return;
+                }
+
+                Clear();
+                OpenSpaceWorld( id );
+
+            } else {
+                OpenSpaceWorld( id );
+            }
         }
 
-        if ( GUILayout.Button( "Save Space", GUILayout.Width( 80 ), GUILayout.Height( 20 ) ) ) {
+        if ( GUILayout.Button( "Save Space",  GUILayout.Height( 20 ) ) ) {
             if ( id == "" ) {
                 return;
             }
@@ -43,23 +55,53 @@ public class Editor_SpaceWorld : EditorWindow {
         }
 
         GUILayout.EndHorizontal();
+
+        GUILayout.Label( "" );
+        GUILayout.Label( "" );
+        if ( GUILayout.Button( "Clear" ,GUILayout.Height(20)) ) {
+            Clear();
+        }
+
         GUILayout.EndVertical();
     }
 
 
 
+    void Clear() {
+        isOpen = false;
+        GameObject[] objs = GameObject.FindObjectsOfType<GameObject>();
+        foreach ( GameObject obj in objs ) {
+            if ( obj.layer == LayerMask.NameToLayer( "Saved" ) ) {
+                DestroyImmediate( obj );
+            }
+        }
+    }
+
+
     void OpenSpaceWorld( string id ) {
-        string filePath = Application.streamingAssetsPath + "/SpaceWorlds/" + ConstantParams.file_space + id + ".dat";
+        string filePath = Application.streamingAssetsPath + "/SpaceWorlds/" + ConstantParams.file_space + id;
 
         if ( !File.Exists( filePath ) ) {
-            if ( !EditorUtility.DisplayDialog( "Warning!", ConstantParams.file_space + id + ".dat doesn't exists, You want create it?", "Yes", "Cancel" ) ) {
+            if ( !EditorUtility.DisplayDialog( "Warning!", ConstantParams.file_space + id + ".xml doesn't exists, You want create it?", "Yes", "Cancel" ) ) {
                 Debug.Log( "Do not create new space world" );
                 return;
             }
+        } else {
+            string spaceWorldDataStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id, false );
+            SpaceWorld space = JsonReader.Deserialize<SpaceWorld>(spaceWorldDataStr);
+
+            foreach ( SpaceItem item in space.items ) {
+                GameObject obj = Instantiate( Resources.Load( item.item_name ) ) as GameObject;
+                obj.name = item.item_name;
+                obj.transform.position = new Vector3(item.item_pos.x,item.item_pos.y,item.item_pos.z);
+                obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
+                obj.transform.localScale = new Vector3( item.item_scale.x, item.item_scale.y, item.item_scale.z );
+                
+                obj.SetActive( item.isActive );
+            }
         }
 
-        Debug.Log( "Create new space world" );
-        
+        isOpen = true;      
     }
 
 
@@ -69,88 +111,50 @@ public class Editor_SpaceWorld : EditorWindow {
     /// <param name="id"></param>
     void SaveSpaceWorld( string id ) {
 
-        string filePath = Application.streamingAssetsPath + "/SpaceWorlds/" + ConstantParams.file_space + id + ".dat";
+        string filePath = Application.streamingAssetsPath + "/SpaceWorlds/" + ConstantParams.file_space + id;
 #if LR_DEBUG
         Debug.Log("<color=green>" + filePath + "</color>");
 #endif
         if( File.Exists(filePath )){
             if( !EditorUtility.DisplayDialog("Warning!","Space world has already exists, You want overide it?","Ok","Cancel")){
                 return;
-            }
+            } 
         }
 
 
         SpaceWorld space = new SpaceWorld();
-        space.spaceId = int.Parse( id );
 
         GameObject[] objects = GameObject.FindObjectsOfType<GameObject>();
+        List<GameObject>savedItems = new List<GameObject>();
 
         foreach ( GameObject obj in objects ) {
             if ( obj.layer != LayerMask.NameToLayer( "Saved" ) ) {
                 continue;
             }
-
-            SpaceItem item = new SpaceItem();
-            item.item_name = obj.name;
-            item.isActive = obj.activeSelf;
-            item.item_pos = obj.transform.position;
-            item.item_rot = obj.transform.rotation;
-            item.item_scale = obj.transform.localScale;
-
-            space.items.Add( item );
+            savedItems.Add( obj );
+            Debug.Log( obj.name );
         }
 
-        string spaceWorldData = SerializeSpaceWorldToXml( space );
-        DataCenter.SaveDataToFile(spaceWorldData,Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id + ".xml",false);
+
+        space.items = new SpaceItem[savedItems.Count];
+        for ( int i = 0; i < savedItems.Count; ++i ) {
+            SpaceItem item = new SpaceItem();
+            item.item_name = savedItems[i].name;
+            item.isActive = savedItems[i].activeSelf;
+            item.item_pos = new LRVector3( savedItems[i].transform.position.x, savedItems[i].transform.position.y, savedItems[i].transform.position.z );
+            item.itme_rot = new LRQuaternion( savedItems[i].transform.rotation.x, savedItems[i].transform.rotation.y, savedItems[i].transform.rotation.z, savedItems[i].transform.rotation.w );
+            item.item_scale = new LRVector3( savedItems[i].transform.localScale.x, savedItems[i].transform.localScale.y, savedItems[i].transform.localScale.z );
+            
+            space.items[i] = item;
+        }
+
+        string spaceWorldDataStr = JsonWriter.Serialize( space );
+        DataCenter.SaveDataToFile( spaceWorldDataStr, Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id, false );
         AssetDatabase.Refresh();
     }
 
 
-    string SerializeSpaceWorldToXml(SpaceWorld space) {
-        XmlDocument xmlDoc = new XmlDocument();
-        XmlElement root = xmlDoc.CreateElement( "SpaceWorld" );
-        xmlDoc.AppendChild( root );
 
-        XmlElement worldItem = xmlDoc.CreateElement( "SpaceID" );
-        worldItem.InnerText = space.spaceId.ToString();
-        root.AppendChild( worldItem );
 
-        worldItem = xmlDoc.CreateElement( "SpaceItems" );
-        root.AppendChild( worldItem );
-
-        foreach ( SpaceItem item in space.items ) {
-            XmlElement spaceItem = xmlDoc.CreateElement( "SpaceItem" );
-            worldItem.AppendChild( spaceItem );
-
-            XmlElement element;
-            
-            element = xmlDoc.CreateElement( "item_name" );
-            element.InnerText = item.item_name;
-            spaceItem.AppendChild( element );
-
-            element = xmlDoc.CreateElement( "isActive" );
-            element.InnerText = item.isActive ? "1" : "0";
-            spaceItem.AppendChild( element );
-
-            element = xmlDoc.CreateElement( "item_pos" );
-            element.InnerText = string.Format( "{0}_{1}_{2}", item.item_pos.x, item.item_pos.y, item.item_pos.z );
-            spaceItem.AppendChild( element );
-
-            element = xmlDoc.CreateElement( "item_rot" );
-            element.InnerText = string.Format( "{0}_{1}_{2}", item.item_rot.x, item.item_rot.y, item.item_rot.z );
-            spaceItem.AppendChild( element );
-
-            element = xmlDoc.CreateElement( "item_scale" );
-            element.InnerText = string.Format( "{0}_{1}_{2}", item.item_scale.x, item.item_scale.y, item.item_scale.z );
-            spaceItem.AppendChild( element );
-        }
-
-#if LR_DEBUG
-        Debug.Log("<color=green>Editor_SpaceWorld.cs:\n</color>" + xmlDoc.InnerXml);
-#endif
-
-        return xmlDoc.InnerXml;
-        
-    }
 
 }

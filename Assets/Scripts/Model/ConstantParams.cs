@@ -14,7 +14,9 @@ public class ConstantParams {
     /// 空间地图大小, 为某一个数的2次方
     /// </summary>
     static public int spaceMatrixSize = 100;
+    static public string idChars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
-    static public string file_gameConfigure = "GameData.dat";
+    static public string file_gameConfigure = "GameData";
     static public string file_space = "Space_";
+   
 }
