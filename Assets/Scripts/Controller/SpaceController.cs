@@ -24,6 +24,7 @@ public class SpaceController {
 
     private int _spaceMapBorder = (int)Mathf.Sqrt( ConstantParams.spaceMatrixSize ) - 1;
 
+    public SpaceJumpDirection_t lastChoiceDir = SpaceJumpDirection_t.None;
 
     /// <summary>
     /// 从一维数组中提取绑定在一起的ID和文件名对象,做为二维空间地图的一个元素
@@ -109,6 +110,8 @@ public class SpaceController {
     /// <param name="dir"></param>
     public void SpaceJump( SpaceJumpDirection_t dir )
     {
+        lastChoiceDir = dir;
+
         SpaceFileItem currentSpaceId = GameManager.gameController.GetCurrentSpace();
         Vector2 currentSpacePos = GetCoordinateBySpaceId( currentSpaceId );
         Vector2 nextSpacePos = Vector2.zero;
@@ -154,8 +157,12 @@ public class SpaceController {
         GameManager.gameController.SetNextSpace( spaceMap[nextSpaceRow, nextSpaceCol] );
 
         TransformSpaceMap( currentSpacePos, dir );
-        GameManager.spaceCreator.SpaceJumpOver();
+        //GameManager.spaceCreator.SpaceJumpOver();
+        Application.LoadLevel( "GamePlay" );
     }
+
+    
+
 
 
     /// <summary>
@@ -171,7 +178,7 @@ public class SpaceController {
         {
             for ( int x = 0; x < spaceSize; ++x )
             {
-                if ( spaceMap[y, x] == id )
+                if ( spaceMap[y, x].id == id.id )
                 {
                     coordinate = new Vector2( x, y );
                     return coordinate;

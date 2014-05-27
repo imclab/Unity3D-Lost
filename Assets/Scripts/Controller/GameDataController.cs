@@ -17,6 +17,7 @@ public class GameDataController {
     public ArrayList elementsAttributes = new ArrayList();
     public Dictionary<SpaceFileItem,SpaceWorld> spaces = new Dictionary<SpaceFileItem, SpaceWorld>();
 
+
     public bool IsLoadFinished
     {
         get;
@@ -79,6 +80,7 @@ public class GameDataController {
             {
                 SpaceWorld spaceWorld = JsonReader.Deserialize<SpaceWorld>( spaceDataStr );
                 spaces.Add( sfi, spaceWorld );
+                Debug.Log( "Add Space: " + sfi.fileName + "    " + spaceWorld.items.Length);
             }
         }
         return 0;
@@ -89,12 +91,22 @@ public class GameDataController {
 
     public int LoadAttributes()
     {
+        elementsAttributes.Clear();
         string attributeJsonStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/", ConstantParams.file_attribute, false );
+        Debug.Log( "AttributeJsonStr: " + attributeJsonStr );
         if ( attributeJsonStr == null )
         {
+            elementsAttributes = new ArrayList();
+            Debug.Log( "No attributeJsonStr...." );
             return -1;
         }
-        elementsAttributes = JsonFx.Json.JsonReader.Deserialize( attributeJsonStr ) as ArrayList;
+        ElementAtrribute[] attributes = JsonFx.Json.JsonReader.Deserialize<ElementAtrribute[]>( attributeJsonStr );
+
+        foreach( ElementAtrribute attr in attributes ) {
+            elementsAttributes.Add( attr );
+        }
+
+        Debug.Log( "Count: " + attributes.Length );
         GameManager.attributeSystem.InitIds();
         return 0;
     }
@@ -108,4 +120,12 @@ public class GameDataController {
         DataCenter.SaveDataToFile( attributeJsonStr, Application.streamingAssetsPath + "/", ConstantParams.file_attribute, false );
 
     }
+}
+
+
+[System.Serializable]
+public class ElementAtrribute {
+    public ElementAtrribute() { }
+    public int id;
+    public string attributeJsonStr;
 }

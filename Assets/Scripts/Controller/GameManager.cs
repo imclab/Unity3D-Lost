@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour {
         }
     }
 
-
+    /*
     /// <summary>
     /// 具体的空间操作,生成,清除
     /// </summary>
@@ -53,6 +53,7 @@ public class GameManager : MonoBehaviour {
             return _spaceCreator;
         }
     } 
+    */
 
 
 

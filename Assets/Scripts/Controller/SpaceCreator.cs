@@ -10,9 +10,17 @@ using UnityEngine;
 using System.Collections;
 using Com.Lost.GameData;
 using JsonFx.Json;
-public class SpaceCreator  {
+public class SpaceCreator : MonoBehaviour {
+
+  
 
     SpaceWorld spaceWorld;
+
+    void Start()
+    {
+        InitSpace();
+    }
+
     /// <summary>
     /// 获取将要进入的空间ID和空间元素数据,然后初始化空间
     /// </summary>
@@ -34,18 +42,5 @@ public class SpaceCreator  {
     }
 
 
-    /// <summary>
-    /// 清除整个空间数据
-    /// </summary>
-    public void ClearSpace() {
-        string levelName = Application.loadedLevelName;
-        Application.LoadLevel( levelName );        
-        
-    }
-
-
-    public void SpaceJumpOver() {
-        ClearSpace();
-    }
 
 }

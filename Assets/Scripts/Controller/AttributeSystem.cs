@@ -40,7 +40,7 @@ public class AttributeSystem  {
 
     public void InitIds( )
     {
-        ids.Clear();
+        
         foreach ( ElementAtrribute attribute in GameManager.gameDataController.elementsAttributes )
         {
             ids.Add( attribute.id );

@@ -18,12 +18,14 @@ public class JumpDoor : MonoBehaviour {
     void OnTriggerEnter2D( Collider2D obj ) {
         if( obj.CompareTag( "Player" ) ) {
             GetComponent<SpriteRenderer>().color = new Color( 1, 0, 0 );
+            obj.SendMessage( "ReadyToSpaceJump", direction, SendMessageOptions.DontRequireReceiver );
         }
     }
 
     void OnTriggerExit2D( Collider2D obj ) {
         if( obj.CompareTag( "Player" ) ) {
             GetComponent<SpriteRenderer>().color = new Color( 1, 1, 1 );
+            obj.SendMessage( "CancelToSpaceJump", SpaceJumpDirection_t.None, SendMessageOptions.DontRequireReceiver );
         }
     }
 

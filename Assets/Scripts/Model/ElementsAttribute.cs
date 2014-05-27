@@ -1,11 +1,4 @@
 ﻿
-[System.Serializable]
-public class ElementAtrribute
-{
-    public int id;
-    public string attributeJsonStr;
-}
-
 
 
 /// <summary>

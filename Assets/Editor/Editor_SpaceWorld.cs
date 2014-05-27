@@ -9,13 +9,14 @@ public class Editor_SpaceWorld : EditorWindow {
     static private string id = "";
     static private bool isOpen = false;
 
+    private bool _isLoadedId = false;
+
     List<int> loadedIDs = new List<int>();
 
     [MenuItem( "Game Tools/Space World Editor" )]
     static void Active()
     {
         EditorWindow.GetWindow<Editor_SpaceWorld>( false );
-        GameManager.gameDataController.LoadAttributes();
     }
 
 
@@ -74,6 +75,17 @@ public class Editor_SpaceWorld : EditorWindow {
         if ( GUILayout.Button( "Clear", GUILayout.Height( 20 ) ) )
         {
             Clear();
+        }
+
+        GUILayout.Label( "" );
+        GUILayout.Label( "" );
+
+        
+        if( !_isLoadedId ) {
+            if( GUILayout.Button( "Load Attribute Data" ) ) {
+                GameManager.gameDataController.LoadAttributes();
+                _isLoadedId = true;
+            }
         }
 
         GUILayout.EndVertical();

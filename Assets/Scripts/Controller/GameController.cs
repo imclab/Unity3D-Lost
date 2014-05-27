@@ -21,10 +21,11 @@ public class GameController {
     public void StartGame()
     {
         GameManager.gameDataController.InitGameData();
+        GameManager.spaceController.InitSpaceMap();
         IsGameStarted = true;
 
         // all data was loaded
-        GameManager.runTimeGameControl.ShowBegan();
+       // GameManager.runTimeGameControl.ShowBegan();
     }
 
 
@@ -86,7 +87,21 @@ public class GameController {
     public SpaceWorld GetNextSpaceWorld()
     {
         SpaceFileItem nextSpace = GetNextSpace();
-        SpaceWorld nextSpaceWorld = new SpaceWorld();
+
+        foreach( SpaceFileItem item in GameManager.gameDataController.spaces.Keys )
+        {
+            if( item.id == nextSpace.id )
+            {
+                Debug.Log( "Found space" );
+                return GameManager.gameDataController.spaces[item];
+            }
+            
+        }
+        
+        Debug.Log( "Not Found space" );
+
+        return null;
+        /*
         if ( GameManager.gameDataController.spaces.TryGetValue( nextSpace, out nextSpaceWorld ) )
         {
             return nextSpaceWorld;
@@ -96,6 +111,7 @@ public class GameController {
             Debug.LogError( "Error: Space Map File " + nextSpace.fileName + " Not Exists!" );
             return null;
         }
+        */
     }
 
 
