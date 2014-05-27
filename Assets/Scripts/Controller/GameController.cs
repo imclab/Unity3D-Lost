@@ -17,92 +17,80 @@ using ID_MAP = System.String;
 
 public class GameController {
 
-    GameConfigure gameConfigure = new GameConfigure();
+
+    public void StartGame()
+    {
+        GameManager.gameDataController.InitGameData();
+        IsGameStarted = true;
+    }
+
+
+
     public bool IsGameStarted {
         get;
         set;
     }
-    public void InitGameConfigure() {
-        IsGameStarted = true;
-        LoadGameConfigure();
-    }
 
-
-    
-    /// <summary>
-    /// 载入游戏配置文件,解析初始化
-    /// </summary>
-    public void LoadGameConfigure() {
-        if ( File.Exists( Application.streamingAssetsPath + "/" + ConstantParams.file_gameConfigure ) ) {
-            string gameConfigureDataStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/", ConstantParams.file_gameConfigure, false );
-            gameConfigure = JsonReader.Deserialize<GameConfigure>( gameConfigureDataStr );
-        } else {
-            InitGameDefault();
-            SaveGameConfigure();
-        }
-
-
-    }
 
 
     /// <summary>
-    /// 将空间ID矩阵及当前ID保存到磁盘
+    /// First game time, this is default configure, generate space id matrix, and choose the first space of world
     /// </summary>
-    public void SaveGameConfigure() {
-        string gameConfigureDataStr = JsonWriter.Serialize(gameConfigure);
-        DataCenter.SaveDataToFile( gameConfigureDataStr, Application.streamingAssetsPath + "/", ConstantParams.file_gameConfigure, false );
-    }
-
-
-    /// <summary>
-    /// 若第一次进入游戏,则生成默认配置文件,初始化空间矩阵,随机选择第一次进入的世界
-    /// </summary>
-    public void InitGameDefault() {
+    public void InitGameDefault()
+    {
         int idCharsLength = ConstantParams.idChars.Length;
         SpaceFileItem mapFileId;
         List<string> tmp_ids = new List<string>();
         string tmp_id;
-        for ( int i = 0; i < ConstantParams.spaceMatrixSize; ++i ) {
-
-            do {
-                tmp_id = string.Format( "{0}{1}{2}{3}{4}",  ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )],
+        for ( int i = 0; i < ConstantParams.spaceMatrixSize; ++i )
+        {
+            do
+            {
+                tmp_id = string.Format( "{0}{1}{2}{3}{4}", ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )],
                                                             ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )],
                                                             ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )],
                                                             ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )],
                                                             ConstantParams.idChars[(int)Random.Range( 0, idCharsLength )] );
             } while ( tmp_ids.Contains( tmp_id ) );
-
             mapFileId = new SpaceFileItem();
             mapFileId.id = tmp_id;
             mapFileId.fileName = ConstantParams.file_space + ( i + 1 ).ToString();
-            gameConfigure.SpaceMapMatrix[i] = mapFileId;
+            GameManager.gameDataController.gameConfigure.SpaceMapMatrix[i] = mapFileId;
         }
-
-        gameConfigure.IsFirstGameTime = false;
-        gameConfigure.nextSpace = (SpaceFileItem)gameConfigure.SpaceMapMatrix[(int)Random.Range( 0, ConstantParams.spaceMatrixSize )];  
+        GameManager.gameDataController.gameConfigure.IsFirstGameTime = false;
+        GameManager.gameDataController.gameConfigure.nextSpace =
+            (SpaceFileItem)GameManager.gameDataController.gameConfigure.SpaceMapMatrix[(int)Random.Range( 0, ConstantParams.spaceMatrixSize )];
     }
 
 
-    /// <summary>
-    /// 返回存放着ID的一维二进制数组
-    /// </summary>
-    /// <returns></returns>
+  
     public SpaceFileItem[] GetSpaceMatrix() {
-        return gameConfigure.SpaceMapMatrix;
+        return GameManager.gameDataController.gameConfigure.SpaceMapMatrix;
     }
 
 
-    /// <summary>
-    /// 返回游戏开始应该进入的空间ID
-    /// </summary>
-    /// <returns></returns>
     public SpaceFileItem GetNextSpace() {
-        return gameConfigure.nextSpace;
+        return GameManager.gameDataController.gameConfigure.nextSpace;
+    }
+
+
+    public SpaceWorld GetNextSpaceWorld()
+    {
+        SpaceFileItem nextSpace = GetNextSpace();
+        SpaceWorld nextSpaceWorld = new SpaceWorld();
+        if ( GameManager.gameDataController.spaces.TryGetValue( nextSpace, out nextSpaceWorld ) )
+        {
+            return nextSpaceWorld;
+        }
+        else
+        {
+            return null;
+        }
     }
 
 
     public void SetNextSpace( SpaceFileItem id ) {
-        gameConfigure.nextSpace = id;
+        GameManager.gameDataController.gameConfigure.nextSpace = id;
     }
 
 }

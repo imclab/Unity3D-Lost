@@ -13,23 +13,22 @@ using JsonFx.Json;
 public class SpaceCreator  {
 
     SpaceWorld spaceWorld;
-    SpaceFileItem space;
     /// <summary>
     /// 获取将要进入的空间ID和空间元素数据,然后初始化空间
     /// </summary>
     public void InitSpace() {
-        space = GameManager.gameController.GetNextSpace();
-        Debug.Log( space.id + "    " + space.fileName + "    " + Time.time);
-        string spaceDataStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/SpaceWorlds/", space.fileName, false);
-        spaceWorld = JsonReader.Deserialize<SpaceWorld>( spaceDataStr );
-        
-        foreach ( SpaceItem item in spaceWorld.items ) {
-            GameObject obj = MonoBehaviour.Instantiate( Resources.Load( item.item_name ) ) as GameObject;
-            obj.name = item.item_name;
-            obj.transform.position = new Vector3( item.item_pos.x, item.item_pos.y, item.item_pos.z );
-            obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
-            obj.transform.localScale = new Vector3( item.item_scale.x, item.item_scale.y, item.item_scale.z );
-            obj.SetActive( item.isActive );
+        spaceWorld = GameManager.gameController.GetNextSpaceWorld();
+        if ( spaceWorld != null )        // get space world successful
+        {
+            foreach ( SpaceItem item in spaceWorld.items )
+            {
+                GameObject obj = MonoBehaviour.Instantiate( Resources.Load( item.item_name ) ) as GameObject;
+                obj.name = item.item_name;
+                obj.transform.position = new Vector3( item.item_pos.x, item.item_pos.y, item.item_pos.z );
+                obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
+                obj.transform.localScale = new Vector3( item.item_scale.x, item.item_scale.y, item.item_scale.z );
+                obj.SetActive( item.isActive );
+            }
         }
     }
 

@@ -3,21 +3,16 @@ using System.Collections;
 using System.IO;
 
 public class AttributeSystem  {
-    ArrayList attributes = new ArrayList();
     private int id = 1;
 
-    public ArrayList GetAllElementsAttribute() {
-        return attributes;
-    }
-    
-
     public void AddElementAttribute(ElementAtrribute attribute){
-        attributes.Add( attribute );
+        GameManager.gameDataController.elementsAttributes.Add( attribute );
     }
 
 
-    public ElementAtrribute GetAttributeByID( int id ) {
-        foreach( ElementAtrribute attribute in attributes ) {
+    public ElementAtrribute GetAttributeStrByID( int id ) {
+        foreach ( ElementAtrribute attribute in GameManager.gameDataController.elementsAttributes )
+        {
             if( attribute.id == id ) {
                 return attribute;
             }
@@ -30,22 +25,6 @@ public class AttributeSystem  {
     public int GetUniqueID() {
         return id++;
     }
-
-
-    public void SaveAllAttribute() {
-        string attributeJsonStr = JsonFx.Json.JsonWriter.Serialize( attributes );
-        DataCenter.SaveDataToFile( attributeJsonStr, Application.streamingAssetsPath + "/", ConstantParams.file_attribute, false );
-    }
-
-
-    public void LoadAllAttribute() {
-        if( !File.Exists(Application.streamingAssetsPath + "/" + ConstantParams.file_attribute )){
-            return;
-        }
-        string attributeJsonStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/", ConstantParams.file_attribute, false );
-        attributes = JsonFx.Json.JsonReader.Deserialize( attributeJsonStr ) as ArrayList;
-    }
-
 
 }
 

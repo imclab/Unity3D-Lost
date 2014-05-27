@@ -10,14 +10,6 @@ using UnityEngine;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
-
-    static public void StartGame() {
-        GameManager.gameController.InitGameConfigure();
-        GameManager.spaceController.InitSpaceMap();
-        //GameManager.spaceCreator.InitSpace();
-    }
-
-
     /// <summary>
     /// 加载保存游戏配置
     /// </summary>
@@ -50,14 +42,17 @@ public class GameManager : MonoBehaviour {
     /// 具体的空间操作,生成,清除
     /// </summary>
     static private SpaceCreator _spaceCreator = null;
-    static public SpaceCreator spaceCreator {
-        get{
-            if( _spaceCreator == null ){
-                _spaceCreator = new SpaceCreator(); 
+    static public SpaceCreator spaceCreator
+    {
+        get
+        {
+            if ( _spaceCreator == null )
+            {
+                _spaceCreator = new SpaceCreator();
             }
             return _spaceCreator;
         }
-    }
+    } 
 
 
 
@@ -71,6 +66,21 @@ public class GameManager : MonoBehaviour {
                 _attributeSystem = new AttributeSystem();
             }
             return _attributeSystem;
+        }
+    }
+
+
+
+    static private GameDataController _gameDataController = null;
+    static public GameDataController gameDataController
+    {
+        get
+        {
+            if ( _gameDataController == null )
+            {
+                _gameDataController = new GameDataController();
+            }
+            return _gameDataController;
         }
     }
     

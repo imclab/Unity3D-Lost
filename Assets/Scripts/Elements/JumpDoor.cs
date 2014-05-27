@@ -66,7 +66,7 @@ public class JumpDoor : MonoBehaviour {
         int index = part.Length - 1;
         try {
             int id = int.Parse( part[index] );
-            ElementAtrribute elementAttribute = GameManager.attributeSystem.GetAttributeByID( id );
+            ElementAtrribute elementAttribute = GameManager.attributeSystem.GetAttributeStrByID( id );
             if( elementAttribute == null ) {
                 Debug.LogWarning( "Get Attribute faild" );
                 return;
