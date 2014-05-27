@@ -83,6 +83,24 @@ public class GameManager : MonoBehaviour {
             return _gameDataController;
         }
     }
+
+
+
+    static private RunTimeGameControl _runTimeGameControl = null;
+    static public RunTimeGameControl runTimeGameControl
+    {
+        get
+        {
+            if ( _runTimeGameControl == null )
+            {
+                GameObject obj = new GameObject();
+                obj.name = "GlobalGameObject";
+                DontDestroyOnLoad( obj );
+                _runTimeGameControl = obj.AddComponent<RunTimeGameControl>();
+            }
+            return _runTimeGameControl;
+        }
+    }
     
    
 }

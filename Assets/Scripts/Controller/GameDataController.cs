@@ -17,6 +17,12 @@ public class GameDataController {
     public ArrayList elementsAttributes = new ArrayList();
     public Dictionary<SpaceFileItem,SpaceWorld> spaces = new Dictionary<SpaceFileItem, SpaceWorld>();
 
+    public bool IsLoadFinished
+    {
+        get;
+        set;
+    }
+
 
     /// <summary>
     /// Load all game data from file

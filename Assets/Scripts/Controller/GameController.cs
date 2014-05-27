@@ -22,6 +22,9 @@ public class GameController {
     {
         GameManager.gameDataController.InitGameData();
         IsGameStarted = true;
+
+        // all data was loaded
+        GameManager.runTimeGameControl.ShowBegan();
     }
 
 
@@ -90,6 +93,7 @@ public class GameController {
         }
         else
         {
+            Debug.LogError( "Error: Space Map File " + nextSpace.fileName + " Not Exists!" );
             return null;
         }
     }
