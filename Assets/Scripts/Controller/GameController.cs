@@ -74,6 +74,12 @@ public class GameController {
     }
 
 
+    public SpaceFileItem GetCurrentSpace() 
+    {
+        return GameManager.gameDataController.gameConfigure.nextSpace;
+    }
+
+
     public SpaceWorld GetNextSpaceWorld()
     {
         SpaceFileItem nextSpace = GetNextSpace();

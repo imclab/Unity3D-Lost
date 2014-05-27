@@ -9,10 +9,13 @@ public class Editor_SpaceWorld : EditorWindow {
     static private string id = "";
     static private bool isOpen = false;
 
+    List<int> loadedIDs = new List<int>();
+
     [MenuItem( "Game Tools/Space World Editor" )]
     static void Active()
     {
         EditorWindow.GetWindow<Editor_SpaceWorld>( false );
+        GameManager.gameDataController.LoadAttributes();
     }
 
 
@@ -106,17 +109,20 @@ public class Editor_SpaceWorld : EditorWindow {
         }
         else
         {
+            loadedIDs.Clear();
+
             string spaceWorldDataStr = DataCenter.LoadDataFromFile( Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id, false );
             SpaceWorld space = JsonReader.Deserialize<SpaceWorld>( spaceWorldDataStr );
 
             foreach ( SpaceItem item in space.items )
             {
+                loadedIDs.Add( item.uid );
                 GameObject obj = Instantiate( Resources.Load( item.item_name ) ) as GameObject;
-                obj.name = item.item_name + "_" + item.uid;
+                obj.SendMessage( "LoadMyAttribute", item.uid, SendMessageOptions.DontRequireReceiver );
+                obj.name = item.item_name;
                 obj.transform.position = new Vector3( item.item_pos.x, item.item_pos.y, item.item_pos.z );
                 obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
                 obj.transform.localScale = new Vector3( item.item_scale.x, item.item_scale.y, item.item_scale.z );
-
                 obj.SetActive( item.isActive );
             }
         }
@@ -138,10 +144,19 @@ public class Editor_SpaceWorld : EditorWindow {
 #endif
         if ( File.Exists( filePath ) )
         {
+            /*
             if ( !EditorUtility.DisplayDialog( "Warning!", "Space world has already exists, You want overide it?", "Ok", "Cancel" ) )
             {
                 return;
             }
+            */
+            Debug.Log( "<color=yellow>Delete exists id</color>" );
+            // first remove saved attribute
+            foreach ( int uid in loadedIDs )
+            {
+                GameManager.attributeSystem.RemoveAttributeByID( uid );
+            }
+
         }
 
 
@@ -160,24 +175,28 @@ public class Editor_SpaceWorld : EditorWindow {
             Debug.Log( obj.name );
         }
 
+        
 
         space.items = new SpaceItem[savedItems.Count];
         for ( int i = 0; i < savedItems.Count; ++i )
         {
             SpaceItem item = new SpaceItem();
             item.uid = GameManager.attributeSystem.GetUniqueID();
-            item.item_name = savedItems[i].name.Split( '_' )[0];
+            item.item_name = savedItems[i].name;
             item.isActive = savedItems[i].activeSelf;
             item.item_pos = new LRVector3( savedItems[i].transform.position.x, savedItems[i].transform.position.y, savedItems[i].transform.position.z );
             item.itme_rot = new LRQuaternion( savedItems[i].transform.rotation.x, savedItems[i].transform.rotation.y, savedItems[i].transform.rotation.z, savedItems[i].transform.rotation.w );
             item.item_scale = new LRVector3( savedItems[i].transform.localScale.x, savedItems[i].transform.localScale.y, savedItems[i].transform.localScale.z );
             space.items[i] = item;
-
+            
+            savedItems[i].SendMessage( "SaveMyAttribute", item.uid,SendMessageOptions.DontRequireReceiver );
         }
 
         string spaceWorldDataStr = JsonWriter.Serialize( space );
         DataCenter.SaveDataToFile( spaceWorldDataStr, Application.streamingAssetsPath + "/SpaceWorlds/", ConstantParams.file_space + id, false );
+        GameManager.gameDataController.SaveAttributes();
         AssetDatabase.Refresh();
+        Debug.Log( "<color=green>World Saved!</color>" );
     }
 
 

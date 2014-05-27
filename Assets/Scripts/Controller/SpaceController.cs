@@ -107,9 +107,9 @@ public class SpaceController {
     /// </summary>
     /// <param name="currentPos"></param>
     /// <param name="dir"></param>
-    public void SpaceJump( SpaceFileItem currentSpaceId, SpaceJumpDirection_t dir )
+    public void SpaceJump( SpaceJumpDirection_t dir )
     {
-
+        SpaceFileItem currentSpaceId = GameManager.gameController.GetCurrentSpace();
         Vector2 currentSpacePos = GetCoordinateBySpaceId( currentSpaceId );
         Vector2 nextSpacePos = Vector2.zero;
         int nextSpaceRow,nextSpaceCol;
@@ -180,17 +180,4 @@ public class SpaceController {
         }
         return coordinate;
     }
-
-
-   
-}
-
-
-
-
-public enum SpaceJumpDirection_t {
-    Left,
-    Right,
-    Up,
-    Down,
 }

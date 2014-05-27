@@ -23,6 +23,7 @@ public class SpaceCreator  {
             foreach ( SpaceItem item in spaceWorld.items )
             {
                 GameObject obj = MonoBehaviour.Instantiate( Resources.Load( item.item_name ) ) as GameObject;
+                obj.SendMessage( "LoadMyAttribute", item.uid, SendMessageOptions.DontRequireReceiver );
                 obj.name = item.item_name;
                 obj.transform.position = new Vector3( item.item_pos.x, item.item_pos.y, item.item_pos.z );
                 obj.transform.rotation = new Quaternion( item.itme_rot.x, item.itme_rot.y, item.itme_rot.z, item.itme_rot.w );
@@ -47,6 +48,4 @@ public class SpaceCreator  {
         ClearSpace();
     }
 
-
-  
 }

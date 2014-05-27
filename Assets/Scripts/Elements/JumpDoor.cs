@@ -6,9 +6,6 @@ public class JumpDoor : MonoBehaviour {
     private float rotateSpeed = 20;
     private float _dir = 1;
 
-    void Awake() {
-        LoadMyAttribute();
-    }
 
     void Start() {
         _dir = Random.value > 0.5f ? 1 : -1;
@@ -36,7 +33,8 @@ public class JumpDoor : MonoBehaviour {
 
 
     // ------------------------------- Attribute operation -----------------------------
-    void SaveMyAttribute() {
+    [ExecuteInEditMode]
+    void SaveMyAttribute(int id) {
         JumpDoorAttribute jumpDoorAttr = new JumpDoorAttribute();
         switch( direction ) {
             case SpaceJumpDirection_t.Left:
@@ -54,53 +52,38 @@ public class JumpDoor : MonoBehaviour {
         }
 
         ElementAtrribute elementAttribute = new ElementAtrribute();
-        elementAttribute.id = GameManager.attributeSystem.GetUniqueID();
-        elementAttribute.attributeJsonStr = JsonFx.Json.JsonWriter.Serialize( elementAttribute );
+        elementAttribute.id = id;
+        elementAttribute.attributeJsonStr = JsonFx.Json.JsonWriter.Serialize( jumpDoorAttr );
         GameManager.attributeSystem.AddElementAttribute( elementAttribute );
-
     }
 
+    [ExecuteInEditMode]
+    void LoadMyAttribute( int id )
+    {
+        ElementAtrribute elementAttribute = GameManager.attributeSystem.GetAttributeStrByID( id );
+        if ( elementAttribute == null )
+        {
+            Debug.LogWarning( "Get Attribute faild" );
+            return;
+        }
+        JumpDoorAttribute attr = JsonFx.Json.JsonReader.Deserialize<JumpDoorAttribute>( elementAttribute.attributeJsonStr );
 
-    void LoadMyAttribute() {
-        string[] part = gameObject.name.Split( '_' );
-        int index = part.Length - 1;
-        try {
-            int id = int.Parse( part[index] );
-            ElementAtrribute elementAttribute = GameManager.attributeSystem.GetAttributeStrByID( id );
-            if( elementAttribute == null ) {
-                Debug.LogWarning( "Get Attribute faild" );
-                return;
-            }
-            JumpDoorAttribute attr = JsonFx.Json.JsonReader.Deserialize<JumpDoorAttribute>( elementAttribute.attributeJsonStr );
-
-            switch( attr.dir ) {
-                case 0:
-                    direction = SpaceJumpDirection_t.Left;
-                    break;
-                case 1:
-                    direction = SpaceJumpDirection_t.Right;
-                    break;
-                case 2:
-                    direction = SpaceJumpDirection_t.Up;
-                    break;
-                case 3:
-                    direction = SpaceJumpDirection_t.Down;
-                    break;
-            }
-
-        } catch {
-            Debug.LogError( "Element ID Parse Error" );
+        switch ( attr.dir )
+        {
+            case 0:
+                direction = SpaceJumpDirection_t.Left;
+                break;
+            case 1:
+                direction = SpaceJumpDirection_t.Right;
+                break;
+            case 2:
+                direction = SpaceJumpDirection_t.Up;
+                break;
+            case 3:
+                direction = SpaceJumpDirection_t.Down;
+                break;
         }
     }
-
-
-
 }
 
-/// <summary>
-/// 0: left    1: right    2: up    3: down
-/// </summary>
-class JumpDoorAttribute {
-    public JumpDoorAttribute(){}
-    public int dir;
-}
+

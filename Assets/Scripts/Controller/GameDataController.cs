@@ -30,6 +30,7 @@ public class GameDataController {
         }
 
         LoadSpaces();
+        LoadAttributes();
     }
 
 
@@ -88,6 +89,7 @@ public class GameDataController {
             return -1;
         }
         elementsAttributes = JsonFx.Json.JsonReader.Deserialize( attributeJsonStr ) as ArrayList;
+        GameManager.attributeSystem.InitIds();
         return 0;
     }
 
@@ -96,6 +98,7 @@ public class GameDataController {
     public void SaveAttributes()
     {
         string attributeJsonStr = JsonWriter.Serialize( elementsAttributes );
+        Debug.Log( "Save Attributes: " +  attributeJsonStr );
         DataCenter.SaveDataToFile( attributeJsonStr, Application.streamingAssetsPath + "/", ConstantParams.file_attribute, false );
 
     }

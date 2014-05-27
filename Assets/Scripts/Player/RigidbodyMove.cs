@@ -22,11 +22,11 @@ public class RigidbodyMove : MonoBehaviour {
     public float jumpSpeed = 25;
     public float gravity = -40;
 
-    private bool _isGrounded = false;
-    private Vector3 velocity = Vector3.zero;
+    //private bool _isGrounded = false;
+    //private Vector3 velocity = Vector3.zero;
     
     public MoveState_t moveState;
-    private float _startJumpDownTime = 0;
+    //private float _startJumpDownTime = 0;
     private float _startJumpUpTime = 0;
     private float _lastVelocityX = 0;
     private float _maxMoveSpeedOfAir;
@@ -65,9 +65,9 @@ public class RigidbodyMove : MonoBehaviour {
             case MoveState_t.Grounded:
 
                 break;
-            case MoveState_t.JumpDown:
-                _startJumpDownTime = Time.time;
-                break;
+            //case MoveState_t.JumpDown:
+            //    _startJumpDownTime = Time.time;
+            //    break;
             case MoveState_t.JumpUp:
                 if( moveState != MoveState_t.Grounded ){
                     return;
