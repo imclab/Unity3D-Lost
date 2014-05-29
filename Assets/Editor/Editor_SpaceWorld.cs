@@ -11,13 +11,17 @@ public class Editor_SpaceWorld : EditorWindow {
 
     private bool _isLoadedId = false;
 
+    private string updateButtonStr = "Start Update";
+
     List<int> loadedIDs = new List<int>();
 
     [MenuItem( "Game Tools/Space World Editor" )]
     static void Active()
     {
         EditorWindow.GetWindow<Editor_SpaceWorld>( false );
+        
     }
+
 
 
     void OnGUI() {
@@ -87,6 +91,8 @@ public class Editor_SpaceWorld : EditorWindow {
                 _isLoadedId = true;
             }
         }
+
+        
 
         GUILayout.EndVertical();
     }
