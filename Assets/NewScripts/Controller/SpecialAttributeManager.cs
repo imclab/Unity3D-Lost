@@ -71,9 +71,15 @@ public class JumpTubeAttrController
         GameDataCenter.WriteDataToFile(data, GameDataCenter.GetSpecialAttributeFilePath(DataFileName.JumpTubes));
     }
 
-    public void GetById(int id)
+    public MJumpTube GetById(int id)
     {
 
+        return null;
+    }
+
+    public void AddSpecialAttr(MJumpTube attr)
+    {
+        jumptubes.Add( attr );
     }
 
 }

@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+[System.Serializable]
 public class MJumpTube {
     private int id;
-    private int nextWorldId;
+    public int nextWorldId;
 
     public int ID
     {
