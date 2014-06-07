@@ -23,6 +23,6 @@ public class BaseItem : MonoBehaviour {
         transform.position = baseData.POS;
         transform.eulerAngles = baseData.ROT;
         transform.localScale = baseData.SCALE;
-        SendMessage( "InitSpecialAttribute", SendMessageOptions.DontRequireReceiver );        
+        SendMessage( "InitSpecialAttribute", baseData.ID,SendMessageOptions.DontRequireReceiver );        
     }
 }

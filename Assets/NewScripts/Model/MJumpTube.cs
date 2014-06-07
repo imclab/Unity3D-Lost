@@ -6,6 +6,9 @@ public class MJumpTube {
     private int id;
     public int nextWorldId;
 
+    /// <summary>
+    /// 此ID 就是物体基础属性中的ID
+    /// </summary>
     public int ID
     {
         get { return id; }

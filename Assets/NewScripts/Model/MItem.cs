@@ -1,4 +1,13 @@
-﻿using UnityEngine;
+﻿/*
+================================================================================
+FileName    : 
+Description s: 
+Date        : 2014-06-07
+Author      : ss0x53
+Version     : 
+================================================================================
+*/
+using UnityEngine;
 using System.Collections;
 
 public class MItem  {
@@ -9,11 +18,15 @@ public class MItem  {
     private Vector3 scale;
 
 
+    /// <summary>
+    /// ID可以根据关卡ID*10及序列化时当前物体的索引数作为其当前关卡中
+    /// </summary>
     public int ID
     {
         get { return id; }
         set { id = value; }
     }
+
 
     public string NAME
     {
